@@ -9,36 +9,49 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
     <style>
-      /*#footer {*/
-        /*width: 100%;*/
-        /*height: 50px;*/
-        /*background-color: grey;*/
-      /*}*/
-      /*table {*/
-        /*font-size: small !important;*/
-      /*}*/
-      /*.form-control {*/
-        /*padding: .275rem .55rem;*/
-        /*font-size: small;*/
-        /*line-height: 0.5;*/
-      /*}*/
-      /*.desc {*/
-        /*position: fixed;*/
-        /*bottom: 0;*/
-        /*height: 200px;*/
-        /*font-size: small;*/
-        /*background-color: white;*/
-        /*border-top: 2px solid grey;*/
-      /*}*/
-      /*.navbar img {*/
-        /*width: 40px;*/
-        /*height: 40px;*/
-        /*margin-right: 10px;*/
-      /*}*/
-      /*select.form-control:not([size]):not([multiple]) {*/
-        /*height: calc(1.55rem + 2px);*/
-      /*}*/
+      .cleric {
+        background-image: url('https://static-waterdeep.cursecdn.com/1-0-6526-30547/Skins/Waterdeep/images/icons/classes/cleric.png');
+      }
+      .wizard {
+        background-image: url('https://static-waterdeep.cursecdn.com/1-0-6526-30547/Skins/Waterdeep/images/icons/classes/wizard.png');
+      }
+      .player-class {
+        border-radius: 50%;
+        height: 74px;
+        width: 74px;
+        opacity: 0.5;
+        cursor: pointer;
+      }
+      .player-class.active {
+        border: 2px solid #455480;
+        opacity: 1;
+      }
+      .player-class .image {
+        border-radius: 50%;
+        background-size: cover;
+        height: 70px;
+        width: 70px;
+        border: 2px solid #fff;
+      }
+      .filter, .class-wrapper {
+        vertical-align: middle;
+        font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
+
+      }
+      .class-wrapper {
+        display: inline-block;
+        margin: 0px 10px;
+      }
+      .class-title {
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
       .preload-title {
         text-align: center;
         vertical-align: middle;
@@ -47,6 +60,29 @@
         background-color: #455480;
         color: rgb(255, 237, 182);
         padding-top: 20%;
+      }
+      .filters {
+        background-image: url(http://dnd.wizards.com/sites/default/files/media/styles/news_banner_header/public/default_images/_Header_Article_Template_0.jpg?itok=VrtdL3xv);
+        background-size: cover;
+        background-position: center;
+        color: #fff;
+        font-weight: 600;
+        border-bottom: 3px solid #eba230;
+      }
+      /*#920100*/
+      /*#ca2f00*/
+      .filters::before {
+        content: " ";
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        margin: 0 -15px;
+        background-color: #44537f;
+        opacity: 0.7;
+      }
+      .filters .rw-multiselect {
+        background-color: #455480;
       }
       .preload-title img {
         width: 40%;
@@ -71,8 +107,8 @@
       }
       .header-wrapper {
         margin-bottom: 10px;
-        position: fixed;
-        top: 0;
+        position: absolute;
+        top: -32px;
         width: 990px;
         background-color: white;
         border-bottom: 2px solid #44537f;
@@ -120,12 +156,12 @@
         border-width: 0px 1px 2px 1px;
         margin: 0px -7px;
         z-index: 1;}
-      .spell-content.wrapper{width:990px;margin-top: 23px;}
+      .spell-content.wrapper{width:990px;margin-top: 32px;}
     </style>
   </head>
   <body>
-    <div id="root">
-      <div class="preload-title">
+  <div id="root">
+    <div class="preload-title">
         <h1>Hold on, it's loading!</h1>
         <img src="./book.svg" alt=""/>
       </div>

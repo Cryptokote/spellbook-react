@@ -7,113 +7,46 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { Multiselect } from 'react-widgets';
 
 
-const spellLvl = {
-    0: 0,
-    1: 1,
-    2: 2,
-    3: 3,
-    4: 4,
-    5: 5,
-    6: 6,
-    7: 7,
-    8: 8,
-    9: 9
-};
-// class Table extends React.Component {
-//     constructor() {
-//         super();
-//         this.state = {
-//             name: 'Click on row',
-//             desc: 'To see descritpion',
-//             data: wizardData,
-//             href: '',
-//             type: 'wizard'
-//         };
-//     }
-//     onNavClick = (type) => {
-//       if (type === 'cleric') {
-//           this.setState({data: clericData, type: type});
-//       } else {
-//           this.setState({data: wizardData, type: type});
-//       }
-//     };
-//     isActive = (type) => {
-//       return type === this.state.type ? 'active' : '';
-//     };
-//     onRowSelect = (row, isSelected, e) => {
-//         this.setState({name: row.name, desc: row.description, href: row.link})
-//     };
-//     selectRowProp = {
-//         mode: 'radio',
-//         clickToSelect: true,
-//         bgColor: 'rgb(255, 237, 182)',
-//         onSelect: this.onRowSelect
-//     };
-//     render() {
-//         return (
-//             <div>
-//                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
-//                     <img src="./book.svg" alt=""/>
-//                     <a className="navbar-brand" href="#">3.5 SpellBook</a>
-//                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-//                         <span className="navbar-toggler-icon"></span>
-//                     </button>
-//
-//                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
-//                         <ul className="navbar-nav mr-auto">
-//                             <li className={`nav-item ${this.isActive('wizard')}`}>
-//                                 <a className="nav-link" href="#" onClick={ () => this.onNavClick('wizard') }>Wizard <span className="sr-only">(current)</span></a>
-//                             </li>
-//                             <li className={`nav-item ${this.isActive('cleric')}`}>
-//                                 <a className="nav-link" href="#" onClick={ () => this.onNavClick('cleric') }>Cleric</a>
-//                             </li>
-//                         </ul>
-//                     </div>
-//                 </nav>
-//             <BootstrapTable data={ this.state.data } scrollTop={ 'Top' } selectRow={ this.selectRowProp }>
-//                 {/*<TableHeaderColumn dataField='link' width='30' dataFormat={ hrefFormatter }>#</TableHeaderColumn>*/}
-//                 <TableHeaderColumn dataField='name' width='200' filter={ { type: 'TextFilter', delay: 100 } } isKey>Name</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='lvl' width='60' filter={ { type: 'SelectFilter', options: spellLvl, defaultValue: 0} }>Lvl</TableHeaderColumn>
-//                 {/*<TableHeaderColumn dataField='type' width='80' filter={ { type: 'TextFilter', defaultValue: 'wizard', delay: 100 } }>Type</TableHeaderColumn>*/}
-//                 <TableHeaderColumn dataField='school' filter={ { type: 'SelectFilter', options: schools, delay: 100 } }>School</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='castTime'>Casting Time</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='range'>Spell range</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='duration'>Duration</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='savingThrow'>Saving throw</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='spellResist'>Spell resist</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='target'>Target</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='area'>Area</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='components'>Components</TableHeaderColumn>
-//                 <TableHeaderColumn dataField='source' filter={ { type: 'SelectFilter', options: sources, delay: 100 } }>Source</TableHeaderColumn>
-//                 {/*<TableHeaderColumn dataField='effect'>Effect</TableHeaderColumn>*/}
-//             </BootstrapTable>
-//                 <div className="col-md-12 desc">
-//                     <h2><a href={this.state.href} target="_blank">{this.state.name}</a></h2>
-//                     {this.state.desc}
-//                 </div>
-//             </div>
-//         );
-//     }
-// }
+const spellLvl = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-class Tr extends React.Component{
 
-}
 class Table extends React.Component {
     constructor() {
         super();
         this.state = {
+            unsortedData: wizardData,
+            activeClass: 'wizard',
             data: wizardData.filter(item => item.lvl === '0'),
-            show: []
+            show: [],
+            search: '',
+            filters: {
+                spellLvl: ['0'],
+                school: [],
+                source: []
+            }
         };
-        // console.log(this.state);
-        // let a = this.state.data.map((item) => {
-        //     console.log(item);
-        //     return item;
-        // });
     }
-    l() {
-        this.setState({data: wizardData.filter(item => item.lvl === '1')});
+    updateSearch(evt) {
+        this.setState({
+            search: evt.target.value
+        });
+    }
+    filter() {
+        const unsorted = [...this.state.unsortedData];
+        if (this.state.filters.spellLvl.length === 0
+            && this.state.filters.school.length === 0
+            && this.state.filters.source.length === 0
+            && this.state.search.length === 0
+        ) {
+            this.setState({data: unsorted})
+        } else {
+            let filtered = unsorted
+                .filter(item => this.state.filters.spellLvl.length === 0 || this.state.filters.spellLvl.includes(item.lvl))
+                .filter(item => this.state.filters.school.length === 0 || this.state.filters.school.includes(item.school))
+                .filter(item => this.state.filters.source.length === 0 || this.state.filters.source.includes(item.source))
+                .filter(item => this.state.search.length === 0 || item.name.includes(this.state.search));
+            this.setState({data: filtered});
+        }
     }
     withoutBrackets(item) {
         return item.split('(')[0];
@@ -135,14 +68,83 @@ class Table extends React.Component {
         const className = 'resist cell';
         return prop.includes('Yes') ? `${className} text-success` : `${className} text-danger`;
     }
+    getPlayerClass(prop) {
+        const baseClass = 'player-class';
+        return prop === this.state.activeClass ? `${baseClass} active` : baseClass;
+    }
+    changePlayerClass(prop) {
+        const data = (prop === 'wizard') ? wizardData : clericData;
+        if (prop !== this.state.activeClass) {
+            this.setState({activeClass: prop, unsortedData: data}, this.filter);
+        }
+    }
     render () {
         return (
+            <div>
+            <div className="filters col-md-12">
+                <div className="row">
+                <div className="col-md-3 form-group">
+                    <label>
+                        Lvl
+                    </label>
+                    <Multiselect
+                        data={spellLvl}
+                        onChange={(value, metadata) => {this.state.filters.spellLvl = value;}}
+                        defaultValue={['0']}
+                    />
+                </div>
+                <div className="col-md-3 form-group">
+                    <label>
+                        Name
+                    </label>
+                    <input type="text" className="form-control" onChange={evt => this.updateSearch(evt)}/>
+                </div>
+                <div className="col-md-3 form-group">
+                    <label>
+                        School
+                    </label>
+                    <Multiselect
+                        data={schools}
+                        onChange={(value, metadata) => {this.state.filters.school = value;}}
+                    />
+                </div>
+                <div className="col-md-3 form-group">
+                    <label>
+                        Source
+                    </label>
+                    <Multiselect
+                        data={sources}
+                        onChange={(value, metadata) => {this.state.filters.source = value;}}
+                    />
+                </div>
+                <div className="col-md-12 text-center">
+                    <div className="class-wrapper">
+                        <div className={this.getPlayerClass('cleric')}
+                             onClick={()=>this.changePlayerClass('cleric')}>
+                            <div className="cleric image"></div>
+                        </div>
+                        <span className="class-title">
+                            Cleric
+                        </span>
+                    </div>
+                    <button onClick={()=>this.filter()} className="btn btn-success filter">
+                        Filter
+                    </button>
+                    <div className="class-wrapper">
+                        <div className={this.getPlayerClass('wizard')}
+                             onClick={()=>this.changePlayerClass('wizard')}>
+                            <div className="wizard image"></div>
+                        </div>
+                        <span className="class-title">
+                            Wizard
+                        </span>
+                    </div>
+                </div>
+                </div>
+            </div>
+
             <div className="spell-content wrapper">
-                {/*<div className="spell-content">*/}
-                    {/*<button onClick={()=>this.l()} className="btn btn-primary">*/}
-                        {/*Lolo*/}
-                    {/*</button>*/}
-                {/*</div>*/}
+
                 <div className="header-wrapper">
                     <div className="lvl header">
                         Lvl
@@ -168,7 +170,7 @@ class Table extends React.Component {
                 </div>
 
                     {this.state.data.map((item) =>
-                        <div key={item.name} className="spell">
+                        <div key={`${item.name}-${item.source}`} className="spell">
                             <div className="spell-content" onClick={() => this.showHide(item.name)}>
                                 <div className="lvl lvl-content cell"><small>{item.lvl}</small></div>
                                 <div className="name cell">
@@ -240,6 +242,7 @@ class Table extends React.Component {
                             </div>
                         </div>
                     )}
+            </div>
             </div>
         )
     }
