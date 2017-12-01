@@ -16,8 +16,11 @@ class Table extends React.Component {
         this.state = {
             unsortedData: wizardData,
             activeClass: 'wizard',
+            isRandom: false,
+            randomCount: 0,
             data: wizardData.filter(item => item.lvl === '0'),
             show: [],
+            spellbook: [],
             search: '',
             filters: {
                 spellLvl: ['0'],
@@ -32,6 +35,10 @@ class Table extends React.Component {
         });
     }
     filter() {
+        if (!this.state.unsortedData) {
+            this.setState({data: []});
+            return
+        }
         const unsorted = [...this.state.unsortedData];
         if (this.state.filters.spellLvl.length === 0
             && this.state.filters.school.length === 0
@@ -73,14 +80,53 @@ class Table extends React.Component {
         return prop === this.state.activeClass ? `${baseClass} active` : baseClass;
     }
     changePlayerClass(prop) {
-        const data = (prop === 'wizard') ? wizardData : clericData;
-        if (prop !== this.state.activeClass) {
-            this.setState({activeClass: prop, unsortedData: data}, this.filter);
+        let data;
+        switch(prop) {
+            case 'wizard':
+                data = wizardData;
+                break;
+            case 'cleric':
+                data = clericData;
+                break;
+            // case 'spellbook':
+            //     data = [];
+            //     break;
         }
+        if (prop !== this.state.activeClass) {
+            this.setState({activeClass: prop, unsortedData: data, isRandom: false}, this.filter);
+        } else if (this.state.isRandom) {
+            this.setState({unsortedData: data, isRandom: false}, this.filter);
+        }
+    }
+    getRandomSpells() {
+        if (!this.state.isRandom) {
+            const unsorted = [...this.state.data];
+            const count = this.state.randomCount;
+            let randomData = [];
+            for (let i = 0; i < count; i++) {
+                let index = Math.floor(Math.random() * unsorted.length);
+                randomData.push(unsorted[index]);
+                unsorted.splice(index, 1);
+            }
+            randomData.sort((a,b) => {return a.lvl - b.lvl});
+            this.setState({isRandom: true, data: randomData});
+        } else {
+            this.setState({isRandom: false}, this.filter);
+        }
+    }
+    updateRandomCount(evt) {
+        this.setState({
+            randomCount: evt.target.value
+        });
+    }
+    getRandomClass() {
+        const baseClass = 'player-class';
+        return this.state.isRandom ? `${baseClass} active` : baseClass;
     }
     render () {
         return (
             <div>
+
             <div className="filters col-md-12">
                 <div className="row">
                 <div className="col-md-3 form-group">
@@ -118,6 +164,18 @@ class Table extends React.Component {
                     />
                 </div>
                 <div className="col-md-12 text-center">
+                    <div className="class-wrapper left form-inline">
+                        <div className={this.getRandomClass()}
+                             onClick={()=>this.getRandomSpells()}>
+                            <div className="spellbook image"></div>
+                        </div>
+                        <span className="class-title">
+                            Get random!
+                        </span>
+                    </div>
+                    <div className="counter-wrapper">
+                        <input type="text" className="form-control" onChange={evt => this.updateRandomCount(evt)}/>
+                    </div>
                     <div className="class-wrapper">
                         <div className={this.getPlayerClass('cleric')}
                              onClick={()=>this.changePlayerClass('cleric')}>
@@ -172,7 +230,9 @@ class Table extends React.Component {
                     {this.state.data.map((item) =>
                         <div key={`${item.name}-${item.source}`} className="spell">
                             <div className="spell-content" onClick={() => this.showHide(item.name)}>
-                                <div className="lvl lvl-content cell"><small>{item.lvl}</small></div>
+                                <div className="lvl lvl-content cell">
+                                    <small>{item.lvl}</small>
+                                </div>
                                 <div className="name cell">
                                     <a href={item.link} target="_blank">{item.name}</a> <br/>
                                     <small>
@@ -187,52 +247,52 @@ class Table extends React.Component {
                             </div>
                             <div className={this.getShowClass(item.name)}>
                                 <div className="row">
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Range
-                                        </span><br/>
+                                        </span>
                                         {item.range}
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Duration
-                                        </span><br/>
+                                        </span>
                                         {item.duration}
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Target
-                                        </span><br/>
+                                        </span>
                                         {item.target}
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Save
-                                        </span><br/>
+                                        </span>
                                         {item.savingThrow}
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Spell resist
-                                        </span><br/>
+                                        </span>
                                         {item.spellResist}
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Cast time
-                                        </span><br/>
+                                        </span>
                                         {item.castTime}
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Area
-                                        </span><br/>
+                                        </span>
                                         {item.area}
                                     </div>
-                                    <div className="col-md-3">
+                                    <div className="col-md-3 col-sm-6">
                                         <span className="section-header">
                                             Source book
-                                        </span><br/>
+                                        </span>
                                         {item.source}
                                     </div>
                                 </div>
