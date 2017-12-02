@@ -3,7 +3,6 @@ import {clericData} from './cleric.data';
 import {wizardData} from './wizard.data'
 import {schools, sources} from './constants';
 
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { Multiselect } from 'react-widgets';
 
 
