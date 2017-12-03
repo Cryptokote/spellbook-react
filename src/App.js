@@ -2,29 +2,37 @@ import React from 'react';
 import {clericData} from './cleric.data';
 import {wizardData} from './wizard.data'
 import {schools, sources} from './constants';
-
-import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import { Multiselect } from 'react-widgets';
+import Api from './api';
 
 
 const spellLvl = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-
 class Table extends React.Component {
+    api = new Api();
     constructor() {
         super();
         this.state = {
-            unsortedData: wizardData,
+            unsortedData: [],
             activeClass: 'wizard',
-            data: wizardData.filter(item => item.lvl === '0'),
+            data: [],
             show: [],
             search: '',
+            wizardData: [],
+            clericData: [],
             filters: {
                 spellLvl: ['0'],
                 school: [],
                 source: []
             }
         };
+
+        this.api.login().then((response) => {
+            window.localStorage.setItem('token', response.data.data);
+            this.api.getClassSpells('wizard').then((spells) => {
+                this.setState({unsortedData: spells.data.data, wizardData: spells.data.data}, this.filter);
+            });
+        })
     }
     updateSearch(evt) {
         this.setState({
@@ -73,10 +81,13 @@ class Table extends React.Component {
         return prop === this.state.activeClass ? `${baseClass} active` : baseClass;
     }
     changePlayerClass(prop) {
-        const data = (prop === 'wizard') ? wizardData : clericData;
-        if (prop !== this.state.activeClass) {
-            this.setState({activeClass: prop, unsortedData: data}, this.filter);
-        }
+        console.log('class Changed');
+        // const data = (prop === 'wizard') ? wizardData : clericData;
+        this.api.getClassSpells(prop).then((spells) => {
+            if (prop !== this.state.activeClass) {
+                this.setState({activeClass: prop, unsortedData: spells.data.data}, this.filter);
+            }
+        });
     }
     render () {
         return (
