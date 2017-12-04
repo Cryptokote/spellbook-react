@@ -3,14 +3,14 @@ import qs from 'qs';
 
 class Api {
     login() {
-        const params = qs.stringify({username: 'admin', password: 'admin'});
+        const params = qs.stringify({email: 'admin@dnd-club', password: 'admin'});
         return axios.request({
             url: 'http://localhost:8080/login',
             // url: 'http://canis-majoris.local:8080/login',
             method: 'post',
-            data: params,
+            data: {email: 'cryptokote@gmail.com', password: 'q1w2e3r4'},
             withCredentials: true,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            // headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         })
     }
     getClassSpells(className) {
