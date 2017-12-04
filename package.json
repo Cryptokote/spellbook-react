@@ -2,6 +2,7 @@
   "name": "spellbook-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "axios": "^0.17.1",
     "qs": "^6.5.1",
