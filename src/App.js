@@ -169,6 +169,14 @@ class Table extends React.Component {
             }
         });
     }
+
+
+    // TODO: tmp method
+    trimLink(link) {
+        return link.replace('/dndtools', '');
+    }
+
+    //
     render () {
         const isLoggedIn = this.state.loggedIn;
 
@@ -278,7 +286,7 @@ class Table extends React.Component {
                                         <i className={this.getFavoriteClass(item)} onClick={() => this.addToFavorite(item)}></i>
                                     </div>
                                     <div className="name cell">
-                                        <a href={item.link} target="_blank">{item.name}</a> <br/>
+                                        <a href={this.trimLink(item.link)} target="_blank">{item.name}</a> <br/>
                                         <small>
                                             ({item.school},{item.components})
                                         </small>
