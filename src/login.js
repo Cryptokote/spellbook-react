@@ -1,12 +1,12 @@
 import React from 'react';
-import Api from './api';
+import apiService from './api';
 
 import {
     Redirect
 } from 'react-router-dom'
 
 class LoginRegister extends React.Component {
-    api = new Api();
+    api = apiService;
     constructor(){
         super();
         this.state = {

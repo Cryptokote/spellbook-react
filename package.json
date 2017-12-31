@@ -5,6 +5,7 @@
   "homepage": "./",
   "dependencies": {
     "axios": "^0.17.1",
+    "prop-types": "^15.6.0",
     "qs": "^6.5.1",
     "react": "^16.0.0",
     "react-bootstrap-table": "^4.1.2",

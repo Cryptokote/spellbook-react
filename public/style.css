@@ -27,7 +27,7 @@
 }
 .login {
     float: right;
-    margin-top: 25px;
+    /*margin-top: 25px;*/
 }
 .favorite.active {
     color: #eba230;
@@ -50,13 +50,13 @@
     background-size: cover;
     height: 50px;
     width: 50px;
-    border: 2px solid #fff;
+    border: 2px solid #44537f;
 }
 .filter {
     margin-top: 32px;
     cursor: pointer;
 }
-.filter, .class-wrapper, .custom-button {
+.filter, .class-wrapper, .custom-button, .filters-appendix {
     vertical-align: middle;
     font-family: "Roboto Condensed",Roboto,Helvetica,sans-serif;
 
@@ -85,7 +85,7 @@
     color: rgb(255, 237, 182);
     padding-top: 20%;
 }
-.filters {
+.app-header {
     background-image: url(http://dnd.wizards.com/sites/default/files/media/styles/news_banner_header/public/default_images/_Header_Article_Template_0.jpg?itok=VrtdL3xv);
     background-size: cover;
     background-position: center;
@@ -93,9 +93,7 @@
     font-weight: 600;
     border-bottom: 3px solid #eba230;
 }
-/*#920100*/
-/*#ca2f00*/
-.filters::before {
+.app-header::before {
     content: " ";
     width: 100%;
     height: 100%;
@@ -105,8 +103,40 @@
     background-color: #44537f;
     opacity: 0.7;
 }
+.app-header a {
+    color: #fff !important;
+    opacity: 0.7;
+}
+.app-header a.active {
+    opacity: 1;
+}
+.filters-appendix {
+    width: 150px;
+    padding: 5px;
+    margin: auto;
+    text-align: center;
+    font-weight: 700;
+    border-radius: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    /* border: 1px solid; */
+
+}
+.filters-appendix:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+.classes-filter {
+    padding-top: 10px;
+    text-align: center;
+}
+.filters-bg, .filters-appendix {
+    background-color: #dde7ff;
+}
+    /*#920100*/
+/*#ca2f00*/
 .filters .rw-multiselect {
-    background-color: #455480;
+    background-color: #dde7ff;
 }
 .preload-title img {
     width: 40%;
@@ -117,7 +147,7 @@
 a {
     color: #455480 !important;
 }
-.hidden {
+.hide {
     display: none !important;
 }
 .cell {
@@ -245,7 +275,7 @@ a {
     border-top: 3px solid #eba230;
     visibility: hidden;
 }
-.notification.shown {
+.notification.show {
     animation: FadeAnimation 4s ease-in .2s forwards;
 }
 .login-form {

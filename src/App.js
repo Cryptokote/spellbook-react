@@ -1,5 +1,6 @@
 import React from 'react';
-import Table from './table';
+import SpellList from './spellList';
+import SpellBook from './spellBook';
 import LoginRegister from './login';
 import {
     BrowserRouter as Router,
@@ -11,7 +12,8 @@ class App extends React.Component {
         return (
             <Router>
                 <div>
-                    <Route exact path="/" component={Table}/>
+                    <Route exact path="/" component={SpellList}/>
+                    <Route path="/spellbook" component={SpellBook}/>
                     <Route path="/login" component={LoginRegister}/>
                 </div>
             </Router>
