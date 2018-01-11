@@ -9,10 +9,12 @@ class SpellBook extends React.Component {
         super();
         this.state = {
             collection: 'favorites'
-        }
+        };
+        this.changeCollection = this.changeCollection.bind(this);
     }
 
     changeCollection(collection) {
+        console.log('change collection', collection);
         this.setState({collection: collection});
     }
 
@@ -20,7 +22,8 @@ class SpellBook extends React.Component {
         return (
             <div>
                 <AppHeader/>
-                <UserCollection collectionName={this.state.collection}/>
+                <UserCollection collectionName={this.state.collection}
+                                onCollectionChange={this.changeCollection}/>
                 <Table dataMode="favorites" collectionName={this.state.collection}/>
             </div>
         );

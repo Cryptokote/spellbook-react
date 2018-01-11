@@ -234,6 +234,10 @@ a {
 @media only screen and (max-width: 510px) {
     .duration {display: none}
     .login-form {width: 90%;}
+    .popupBody {width: 90% !important;}
+    .popupBody h2 {font-size: 1.5rem;}
+    .collections-controls button, .collectionsDropdown {width:100% !important;}
+    .collections-controls button {margin: 5px 0px 0px 0px;}
 }
 @media (min-width: 576px) {
     .col-sm-6 .section-header {
@@ -299,6 +303,32 @@ a {
 .btn-link:hover, .btn-link a:hover{
     color: #fee187 !important;
 }
-.btn-default.filter{
+.btn-default.filter, .collections-btn {
     margin-left: 5px;
+}
+
+.collectionsDropdown {
+    display: inline-block;
+    width: 300px;
+}
+.popupBg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0006;
+    z-index: 10;
+}
+.popupBody {
+    text-align: center;
+    vertical-align: middle;
+    width: 40%;
+    background-color: #fff;
+    margin: 10% auto;
+    border-radius: 5px;
+    padding: 10px;
+}
+.popupActions {
+    text-align: right;
 }

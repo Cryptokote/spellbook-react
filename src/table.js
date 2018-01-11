@@ -41,8 +41,11 @@ class Table extends React.Component {
             this.getUnsortedData = this.api.getClassSpells(this.state.activeClass);
         }
         if (this.props.dataMode === 'favorites') {
-            this.getUnsortedData = this.api.getFavorites();
+            this.getUnsortedData = this.props.collectionName === 'favorites'
+                ? this.api.getFavorites()
+                : this.api.getCollection(this.props.collectionName);
         }
+
         this.update();
 
 
@@ -50,6 +53,14 @@ class Table extends React.Component {
             this.api.getFavorites().then((favorites) => {
                 this.setState({favorites: favorites.data.data});
             });
+        }
+    }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.collectionName && nextProps.dataMode === 'favorites') {
+            this.getUnsortedData = nextProps.collectionName === 'favorites'
+                ? this.api.getFavorites()
+                : this.api.getCollection(nextProps.collectionName);
+            this.update();
         }
     }
     update() {
@@ -227,7 +238,6 @@ class Table extends React.Component {
                     </div>
                 </div>
                 <div className="spell-content wrapper">
-
                     <SpellsHeader/>
 
                     {this.state.data.map((item) =>

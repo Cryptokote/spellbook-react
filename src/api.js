@@ -62,6 +62,30 @@ class Api {
             withCredentials: true
         })
     }
+    getCollection(collectionName) {
+        return axios.request({
+            url: 'http://spellbook.tk/api/get_collection',
+            method: 'get',
+            params: {collection_name: collectionName},
+            withCredentials: true
+        });
+    }
+    createCollection(collName) {
+        return axios.request({
+            url: 'http://spellbook.tk/api/create_collection',
+            method: 'post',
+            data: {collection_name: collName},
+            withCredentials: true
+        })
+    }
+    deleteCollection(collName) {
+        return axios.request({
+            url: 'http://spellbook.tk/api/delete_collection',
+            method: 'post',
+            data: {collection_name: collName},
+            withCredentials: true
+        })
+    }
 }
 
 const apiService = new Api();
