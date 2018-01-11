@@ -70,20 +70,24 @@ class Table extends React.Component {
     }
     filter() {
         const unsorted = [...this.state.unsortedData];
+        const lvlClass = this.state.activeClass;
+
         if (this.state.filters.spellLvl.length === 0
             && this.state.filters.school.length === 0
             && this.state.filters.source.length === 0
             && this.state.search.length === 0
         ) {
-            this.setState({data: unsorted})
+            this.setState({data: unsorted.filter(item => item.lvl[lvlClass] !== undefined)})
         } else {
-            const lvlClass = this.state.activeClass;
             let filtered = unsorted
+                .filter(item => item.lvl[lvlClass] !== undefined)
                 .filter(item => this.state.filters.spellLvl.length === 0
                     || this.state.filters.spellLvl.includes(item.lvl[lvlClass]))
                 .filter(item => this.state.filters.school.length === 0 || this.state.filters.school.includes(item.school))
                 .filter(item => this.state.filters.source.length === 0 || this.state.filters.source.includes(item.source))
-                .filter(item => this.state.search.length === 0 || item.name.includes(this.state.search) || item.description.includes(this.state.search));
+                .filter(item => this.state.search.length === 0
+                    || item.name.toLowerCase().includes(this.state.search.toLowerCase())
+                    || item.description.toLowerCase().includes(this.state.search.toLowerCase()));
             this.setState({data: filtered});
         }
     }
