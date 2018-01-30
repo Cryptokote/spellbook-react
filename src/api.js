@@ -86,6 +86,22 @@ class Api {
             withCredentials: true
         })
     }
+    deleteFromCollection(collName, spellId) {
+        return axios.request({
+            url: 'http://spellbook.tk/api/remove_from_collection',
+            method: 'post',
+            data: {collection_name: collName, id: spellId},
+            withCredentials: true
+        })
+    }
+    addToCollection(collName, spellId) {
+        return axios.request({
+            url: 'http://spellbook.tk/api/add_to_collection',
+            method: 'post',
+            data: {collection_name: collName, id: spellId},
+            withCredentials: true
+        })
+    }
 }
 
 const apiService = new Api();

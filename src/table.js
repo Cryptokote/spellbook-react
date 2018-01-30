@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {schools, sources} from './constants';
-import { Multiselect } from 'react-widgets';
+import { Multiselect, DropdownList } from 'react-widgets';
 import apiService from './api';
 import SpellsHeader from './spellheader';
 
@@ -26,6 +26,7 @@ class Table extends React.Component {
             data: [],
             show: [],
             search: '',
+            randomCount: '',
             showNotification: false,
             notificationMessage: '',
             favorites: [],
@@ -34,11 +35,22 @@ class Table extends React.Component {
                 spellLvl: [1],
                 school: [],
                 source: []
-            }
+            },
+            popupShowed: false,
+            popupBody: '',
+            currentSpellName: '',
+            collections: [],
+            addToCollection: ''
         };
 
         if (this.props.dataMode === 'spells') {
             this.getUnsortedData = this.api.getClassSpells(this.state.activeClass);
+            this.api.getUserData().then(response => {
+                this.setState({
+                    collections: [...response.data.data.collections],
+                    addToCollection: response.data.data.collections[0]
+                });
+            });
         }
         if (this.props.dataMode === 'favorites') {
             this.getUnsortedData = this.props.collectionName === 'favorites'
@@ -55,6 +67,8 @@ class Table extends React.Component {
             });
         }
     }
+
+    // on props enter
     componentWillReceiveProps(nextProps) {
         if (nextProps.collectionName && nextProps.dataMode === 'favorites') {
             this.getUnsortedData = nextProps.collectionName === 'favorites'
@@ -63,6 +77,8 @@ class Table extends React.Component {
             this.update();
         }
     }
+
+    // working with data
     update() {
         this.getUnsortedData.then((spells) => {
             this.setState({unsortedData: spells.data.data}, this.filter);
@@ -71,16 +87,13 @@ class Table extends React.Component {
     filter() {
         const unsorted = [...this.state.unsortedData];
         const lvlClass = this.state.activeClass;
-
-        if (this.state.filters.spellLvl.length === 0
-            && this.state.filters.school.length === 0
-            && this.state.filters.source.length === 0
-            && this.state.search.length === 0
+        let filtered = unsorted;
+        if (this.state.filters.spellLvl.length > 0
+            || this.state.filters.school.length > 0
+            || this.state.filters.source.length > 0
+            || this.state.search.length > 0
         ) {
-            this.setState({data: unsorted.filter(item => item.lvl[lvlClass] !== undefined)})
-        } else {
-            let filtered = unsorted
-                .filter(item => item.lvl[lvlClass] !== undefined)
+            filtered = unsorted
                 .filter(item => this.state.filters.spellLvl.length === 0
                     || this.state.filters.spellLvl.includes(item.lvl[lvlClass]))
                 .filter(item => this.state.filters.school.length === 0 || this.state.filters.school.includes(item.school))
@@ -88,8 +101,22 @@ class Table extends React.Component {
                 .filter(item => this.state.search.length === 0
                     || item.name.toLowerCase().includes(this.state.search.toLowerCase())
                     || item.description.toLowerCase().includes(this.state.search.toLowerCase()));
-            this.setState({data: filtered});
         }
+        if (parseInt(this.state.randomCount) > 0) {
+            filtered = this.getRandomFromList(filtered);
+        }
+        this.setState({data: filtered.filter(item => item.lvl[lvlClass] !== undefined)});
+
+    }
+    getRandomFromList(data) {
+        const randomData = [];
+        let randomCount = this.state.randomCount;
+        while (randomCount > 0) {
+            const iter = Math.floor(Math.random() * data.length);
+            randomData.push(data[iter]);
+            randomCount --;
+        }
+        return randomData;
     }
     changePlayerClass(prop) {
         if (prop !== this.state.activeClass){
@@ -124,9 +151,7 @@ class Table extends React.Component {
         event.stopPropagation()
     }
 
-
-
-
+    // view classNames
     getResistClass(prop) {
         return prop.includes('Yes') ? 'text-success' : 'text-danger';
     }
@@ -138,17 +163,38 @@ class Table extends React.Component {
         const isFav = !!(this.state.favorites.find(i => i._id === item._id)) ? 'active' : '';
         return `fa fa-star favorite ${isFav}`;
     }
+    getCollectionClass() {
+        let baseClass = 'fa favorite';
+        if (this.props.dataMode === 'spells') {
+            baseClass = `${baseClass} fa-floppy-o`;
+        } else if (this.props.collectionName === 'favorites') {
+            baseClass = `hidden`;
+        } else {
+            baseClass = `${baseClass} fa-times`;
+        }
+        return baseClass;
+
+    }
     getShowHiddenClass(state) {
         return state ? 'show' : 'hide';
     }
     withoutBrackets(item) {
         return item.split('(')[0];
     }
+
+    // inputs update
+    updateRandomCount(evt) {
+        this.setState({
+            randomCount: evt.target.value
+        });
+    }
     updateSearch(evt) {
         this.setState({
             search: evt.target.value
         });
     }
+
+    // trigering view states
     showHideMore(name) {
         let newShowArray = [];
         if (this.state.show.includes(name)) {
@@ -168,8 +214,73 @@ class Table extends React.Component {
         return link.replace('/dndtools', '');
     }
     //
+    // popup copy-paste
+    deleteFromCollection(id) {
+        this.api.deleteFromCollection(this.props.collectionName, id).then((response) => {
+            console.log(response);
+        });
+    }
+    addToCollection(id) {
+        this.api.addToCollection(this.state.addToCollection, id).then((response) => {
+            console.log(response);
+        });
+        this.hidePopup();
+    }
+    updateDropdown(value) {
+        this.setState({addToCollection: value})
+    }
+    showPopup(event, spell) {
+        event.stopPropagation();
+        const spellId = spell._id;
+        const addToCollectionBody =
+            <div className="popupBody">
+                <h4>Add <b>{spell.name}</b> to collection</h4>
+                <div className="form-group col-md-12">
+                    <DropdownList
+                        data={this.state.collections}
+                        onChange={value => this.updateDropdown(value)}
+                        defaultValue={[this.state.collections[0]]}
+                    />
+                </div>
+                <div className="form-group col-md-12 popupActions">
+                    <button className="btn btn-warning collections-btn" onClick={() => this.hidePopup()}>Cancel</button>
+                    <button className="btn btn-success collections-btn" onClick={() => this.addToCollection(spellId)}>Add</button>
+                </div>
+            </div>
+        ;
+        const deleteFromCollectionBody =
+            <div className="popupBody">
+                <h4>Delete <b>{spell.name}</b> from <b>{this.props.collectionName}</b> ?</h4>
+                <div className="form-group col-md-12 popupActions">
+                    <button className="btn btn-warning collections-btn" onClick={() => this.hidePopup()}>Cancel</button>
+                    <button className="btn btn-danger collections-btn" onClick={() => this.deleteFromCollection(spellId)}>Delete</button>
+                </div>
+            </div>
+        ;
+
+        const collectionPopupBody = this.props.dataMode === 'spells' ? addToCollectionBody : deleteFromCollectionBody;
+        this.setState({popupBody: collectionPopupBody, popupShowed: true});
+    }
+    hidePopup() {
+        this.setState({popupShowed: false});
+    }
 
     render () {
+        let random = null;
+        if (this.props.dataMode === 'spells') {
+            random =
+                <div className="col-md-1 form-group">
+                    <label>
+                        Random
+                    </label>
+                    <input type="number" className="form-control" onChange={evt => this.updateRandomCount(evt)}/>
+                </div>
+        }
+
+        // TODO: remove copy-paste
+        const popupBgClass = this.state.popupShowed ? 'popupBg' : 'popupBg hide';
+
+        // TODO: end
 
         return (
             <div>
@@ -222,7 +333,7 @@ class Table extends React.Component {
                                 onChange={(value, metadata) => {this.state.filters.school = value;}}
                             />
                         </div>
-                        <div className="col-md-3 form-group">
+                        <div className="col-md-2 form-group">
                             <label>
                                 Source
                             </label>
@@ -231,6 +342,7 @@ class Table extends React.Component {
                                 onChange={(value, metadata) => {this.state.filters.source = value;}}
                             />
                         </div>
+                            {random}
                         <div className="col-md-2 form-group">
                             <button onClick={()=>this.filter()} className="btn btn-success filter">
                                 <i className="fa fa-filter"></i> Filter
@@ -250,6 +362,7 @@ class Table extends React.Component {
                                 <div className="lvl lvl-content cell">
                                     <small>{item.lvl[this.state.activeClass]}</small>
                                     <i className={this.getFavoriteClass(item)} onClick={(e) => this.addToFavorite(e, item)}></i>
+                                    <i className={this.getCollectionClass()} onClick={(e) => this.showPopup(e, item)}></i>
                                 </div>
                                 <div className="name cell">
                                     <a href={this.trimLink(item.link)} target="_blank">{item.name}</a> <br/>
@@ -328,6 +441,9 @@ class Table extends React.Component {
                     <h2>
                         {this.state.notificationMessage}
                     </h2>
+                </div>
+                <div className={popupBgClass}>
+                    {this.state.popupBody}
                 </div>
             </div>
         )

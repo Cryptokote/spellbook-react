@@ -74,6 +74,8 @@ class UserCollection extends React.Component {
                 </div>
 
         }
+
+
         const popupBgClass = this.state.popupShowed ? 'popupBg' : 'popupBg hide';
         const addCollectionBody =
             <div className="popupBody">

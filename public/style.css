@@ -191,7 +191,8 @@ a {
     transition: background-image .2s cubic-bezier(0.17,0.67,0.83,0.67);
     padding: 10px;
 }
-.lvl{width: 40px;} .lvl-content {padding:10px 5px;}
+.lvl{width: 40px;}
+.lvl-content {padding:0px 5px;}
 .name{width: 250px;}
 .name small {
     font-style: italic;
@@ -331,4 +332,50 @@ a {
 }
 .popupActions {
     text-align: right;
+}
+
+.btn-warning {
+    background-color: #fee187 !important;
+    border-color: #fee187 !important;
+}
+.btn-warning:hover {
+    background-color: #ffdb6c !important;
+    border-color: #ffdb6c !important;
+}
+.btn-warning:not([disabled]):not(.disabled).active, .btn-warning:not([disabled]):not(.disabled):active,.show>.btn-warning.dropdown-toggle {
+    background-color: #f9ca39 !important;
+    border-color: #f9ca39 !important;
+}
+
+
+.btn-danger {
+    background-color: #ff7045 !important;
+    border-color: #ff7045 !important;
+}
+.btn-danger:hover {
+    background-color: #f75929 !important;
+    border-color: #f75929 !important;
+}
+.btn-danger:not([disabled]):not(.disabled).active, .btn-danger:not([disabled]):not(.disabled):active,.show>.btn-danger.dropdown-toggle{
+    background-color: #f75423 !important;
+    border-color: #f75423 !important;
+}
+
+
+
+#korovan {
+    margin: auto;
+    display: none;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 100px 0px 0px 0px;
+    background-color: #000000cf;
+    color: #fff;
+}
+#korovan img {
+    display: block;
+    margin: auto;
 }
